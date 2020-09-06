@@ -81,7 +81,7 @@ namespace ServerAnnouncements
 	        {
 		        foreach (Player player in Player.List)
 		        {
-			        player.ShowHint($"\n\n\n\n\n{hint.Message}", hint.Duration);
+			        player.ShowHint($"\n\n\n\n\n\n\n{hint.Message}", hint.Duration);
 		        }
 		        yield return Timing.WaitForSeconds(hint.Interval);
 	        }

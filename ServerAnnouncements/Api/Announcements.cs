@@ -13,7 +13,8 @@ namespace ServerAnnouncements.Api
 		public static readonly string PluginPath =
 			Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "Plugins"),
 				"ServerAnnouncements");
-		public static readonly string dataPath = Path.Combine(PluginPath, "data.yml");
+		public static readonly string dataPath = Path.Combine(Path.Combine(PluginPath, Server.Port.ToString()), "data.yml");
+		public static readonly string sharedDataPath = Path.Combine(PluginPath, "SharedData.yml");
 
 		[Description("Broadcasts are shown at the top of the screen.")]
 		public List<Broadcast> Broadcasts { get; internal set; } = new List<Broadcast>();
@@ -29,13 +30,16 @@ namespace ServerAnnouncements.Api
 				.Build();
 			string yaml = serializer.Serialize(this);
 
-			Directory.CreateDirectory(PluginPath);
+			Directory.CreateDirectory(Path.Combine(PluginPath, Server.Port.ToString()));
 
 			File.WriteAllText(dataPath, yaml);
 		}
 
 		public static void LoadData()
 		{
+			IDeserializer deserializer =
+				new DeserializerBuilder().IgnoreUnmatchedProperties().IgnoreFields().Build();
+
 			if (!File.Exists(dataPath))
 			{
 				ServerAnnouncements.Announcements = new Announcements();
@@ -50,24 +54,44 @@ namespace ServerAnnouncements.Api
 				};
 
 				ServerAnnouncements.Announcements.SaveData();
-
-				return;
 			}
-			string data = File.ReadAllText(dataPath);
-
-			if (string.IsNullOrEmpty(data))
+			else
 			{
-				ServerAnnouncements.Announcements = new Announcements();
-				ServerAnnouncements.Announcements.SaveData();
+				string data = File.ReadAllText(dataPath);
 
-				return;
+				if (string.IsNullOrEmpty(data))
+				{
+					ServerAnnouncements.Announcements = new Announcements();
+					ServerAnnouncements.Announcements.SaveData();
+
+					return;
+				}
+
+				var announcements = deserializer.Deserialize<Announcements>(data);
+
+				ServerAnnouncements.Announcements = announcements;
 			}
 
-			IDeserializer deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().IgnoreFields().Build();
+			if (File.Exists(sharedDataPath))
+			{
+				string sharedData = File.ReadAllText(sharedDataPath);
 
-			var announcements = deserializer.Deserialize<Announcements>(data);
+				if (string.IsNullOrEmpty(sharedData)) return;
 
-			ServerAnnouncements.Announcements = announcements;
+				var sharedAnnouncements = deserializer.Deserialize<Announcements>(sharedData);
+				ServerAnnouncements.Announcements.Hints.AddRange(sharedAnnouncements.Hints);
+				ServerAnnouncements.Announcements.Broadcasts.AddRange(sharedAnnouncements.Broadcasts);
+			}
+			else
+			{
+				ISerializer serializer = new SerializerBuilder()
+					.WithTypeInspector(inner => new CommentGatheringTypeInspector(inner))
+					.WithEmissionPhaseObjectGraphVisitor(args => new CommentsObjectGraphVisitor(args.InnerVisitor))
+					.Build();
+				string yaml = serializer.Serialize(new Announcements());
+
+				File.WriteAllText(sharedDataPath, yaml);
+			}
 		}
 	}
 
