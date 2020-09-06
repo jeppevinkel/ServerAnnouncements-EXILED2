@@ -11,7 +11,8 @@ namespace ServerAnnouncements.Api
 	public class Announcements
 	{
 		public static readonly string PluginPath =
-			Environment.ExpandEnvironmentVariables(@"%AppData%\EXILED\Plugins\ServerAnnouncements");
+			Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Plugins"),
+				"ServerAnnouncements");
 		public static readonly string dataPath = Path.Combine(PluginPath, "data.yml");
 
 		[Description("Broadcasts are shown at the top of the screen.")]
