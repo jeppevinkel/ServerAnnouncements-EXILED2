@@ -11,7 +11,7 @@ namespace ServerAnnouncements.Api
 	public class Announcements
 	{
 		public static readonly string PluginPath =
-			Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Plugins"),
+			Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EXILED"), "Plugins"),
 				"ServerAnnouncements");
 		public static readonly string dataPath = Path.Combine(PluginPath, "data.yml");
 
