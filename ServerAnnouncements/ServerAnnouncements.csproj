@@ -76,6 +76,11 @@
     <Compile Include="Api\YamlComments\CommentGatheringTypeInspector.cs" />
     <Compile Include="Api\YamlComments\CommentsObjectDescriptor.cs" />
     <Compile Include="Api\YamlComments\CommentsObjectGraphVisitor.cs" />
+    <Compile Include="Commands\Edit\Broadcast\Message.cs" />
+    <Compile Include="Commands\Edit\Broadcast\Prefix.cs" />
+    <Compile Include="Commands\Edit\Hint\Prefix.cs" />
+    <Compile Include="Commands\Edit\Hint\Message.cs" />
+    <Compile Include="Commands\Edit\Prefix.cs" />
     <Compile Include="Commands\Prefix.cs" />
     <Compile Include="Commands\Reload.cs" />
     <Compile Include="Config.cs" />

@@ -15,6 +15,8 @@ namespace ServerAnnouncements.Commands
 		public override void LoadGeneratedCommands()
 		{
 			RegisterCommand(new Reload());
+
+			//RegisterCommand(new Edit.Prefix(new List<string>{Command}));
 		}
 
 		protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)

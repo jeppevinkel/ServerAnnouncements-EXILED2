@@ -38,16 +38,16 @@ namespace ServerAnnouncements
 
         public static void ActivateAnnouncements()
         {
-	        foreach (Api.Broadcast broadcast in Announcements.Broadcasts)
+	        foreach (KeyValuePair<string, Api.Broadcast> broadcast in Announcements.Broadcasts)
 	        {
-		        _coroutines.Add(Timing.RunCoroutine(PlayBroadcast(broadcast)));
-		        Log.Debug($"Loaded broadcast: {broadcast.Message}", Loader.ShouldDebugBeShown);
+		        _coroutines.Add(Timing.RunCoroutine(PlayBroadcast(broadcast.Value)));
+		        Log.Debug($"Loaded broadcast: {broadcast.Key}", Loader.ShouldDebugBeShown);
 			}
 
-	        foreach (Hint hint in Announcements.Hints)
+	        foreach (KeyValuePair<string, Hint> hint in Announcements.Hints)
 	        {
-		        _coroutines.Add(Timing.RunCoroutine(PlayHint(hint)));
-				Log.Debug($"Loaded hint: {hint.Message}", Loader.ShouldDebugBeShown);
+		        _coroutines.Add(Timing.RunCoroutine(PlayHint(hint.Value)));
+				Log.Debug($"Loaded hint: {hint.Key}", Loader.ShouldDebugBeShown);
 	        }
 
 			Log.Debug($"Total running coroutines: {_coroutines.Count}", Loader.ShouldDebugBeShown);

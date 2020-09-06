@@ -26,7 +26,7 @@ namespace ServerAnnouncements.Commands
 		}
 
 		public string Command { get; } = "reload";
-		public string[] Aliases { get; } = {"r"};
+		public string[] Aliases { get; } = { "r" };
 		public string Description { get; } = "Reloads the announcements from the config file.";
 	}
 }

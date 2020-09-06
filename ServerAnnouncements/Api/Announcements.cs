@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using ServerAnnouncements.Api.YamlComments;
 using YamlDotNet.Serialization;
 
@@ -17,10 +18,10 @@ namespace ServerAnnouncements.Api
 		public static readonly string sharedDataPath = Path.Combine(PluginPath, "SharedData.yml");
 
 		[Description("Broadcasts are shown at the top of the screen.")]
-		public List<Broadcast> Broadcasts { get; internal set; } = new List<Broadcast>();
+		public Dictionary<string, Broadcast> Broadcasts { get; internal set; } = new Dictionary<string, Broadcast>();
 
 		[Description("Hints are shown as smaller text at the bottom of the screen.")]
-		public List<Hint> Hints { get; internal set; } = new List<Hint>();
+		public Dictionary<string, Hint> Hints { get; internal set; } = new Dictionary<string, Hint>();
 
 		public void SaveData()
 		{
@@ -43,14 +44,14 @@ namespace ServerAnnouncements.Api
 			if (!File.Exists(dataPath))
 			{
 				ServerAnnouncements.Announcements = new Announcements();
-				ServerAnnouncements.Announcements.Broadcasts = new List<Broadcast>
+				ServerAnnouncements.Announcements.Broadcasts = new Dictionary<string, Broadcast>
 				{
-					new Broadcast(20, 6, 30, $"You are playing on {Server.Name}. Please enjoy your stay!")
+					{ "playing", new Broadcast(20, 6, 30, $"You are playing on {Server.Name}. Please enjoy your stay!") }
 				};
-				ServerAnnouncements.Announcements.Hints = new List<Hint>
+				ServerAnnouncements.Announcements.Hints = new Dictionary<string, Hint>
 				{
-					new Hint(40, 3, 40, "Have a <color=#10ff10>nice</color> day!"),
-					new Hint(40, 3, 60, "Enjoy your stay!")
+					{"niceday", new Hint(40, 3, 40, "Have a <color=#10ff10>nice</color> day!")},
+					{"enjoy", new Hint(40, 3, 60, "Enjoy your stay!")}
 				};
 
 				ServerAnnouncements.Announcements.SaveData();
@@ -79,8 +80,13 @@ namespace ServerAnnouncements.Api
 				if (string.IsNullOrEmpty(sharedData)) return;
 
 				var sharedAnnouncements = deserializer.Deserialize<Announcements>(sharedData);
-				ServerAnnouncements.Announcements.Hints.AddRange(sharedAnnouncements.Hints);
-				ServerAnnouncements.Announcements.Broadcasts.AddRange(sharedAnnouncements.Broadcasts);
+				ServerAnnouncements.Announcements.Hints.Concat(sharedAnnouncements.Hints)
+					.GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+					.ToDictionary(g => g.Key, g => g.First());
+
+				ServerAnnouncements.Announcements.Broadcasts.Concat(sharedAnnouncements.Broadcasts)
+					.GroupBy(kvp => kvp.Key, kvp => kvp.Value)
+					.ToDictionary(g => g.Key, g => g.First());
 			}
 			else
 			{
