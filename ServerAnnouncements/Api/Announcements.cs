@@ -44,7 +44,7 @@ namespace ServerAnnouncements.Api
 				};
 				ServerAnnouncements.Announcements.Hints = new List<Hint>
 				{
-					new Hint(40, 3, 40, "Have a nice day!"),
+					new Hint(40, 3, 40, "Have a <color=#10ff10>nice</color> day!"),
 					new Hint(40, 3, 60, "Enjoy your stay!")
 				};
 

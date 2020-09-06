@@ -33,8 +33,8 @@ namespace ServerAnnouncements.Commands
 			return false;
 		}
 
-		public override string Command { get; } = "serverannouncements";
-		public override string[] Aliases { get; } = {"sa"};
+		public override string Command { get; } = "sa";
+		public override string[] Aliases { get; } = { "serverannouncements" };
 		public override string Description { get; } = "Handles commands related to server announcements.";
 	}
 }
