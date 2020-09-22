@@ -14,7 +14,7 @@ namespace ServerAnnouncements
 
         public static Announcements Announcements;
 
-        private static readonly List<CoroutineHandle> _coroutines = new List<CoroutineHandle>();
+        private static readonly List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
 
         public override void OnEnabled()
         {
@@ -32,30 +32,31 @@ namespace ServerAnnouncements
         {
 	        base.OnDisabled();
 
-	        Timing.KillCoroutines(_coroutines);
-	        _coroutines.Clear();
+	        Timing.KillCoroutines(Coroutines);
+	        Coroutines.Clear();
         }
 
         public static void ActivateAnnouncements()
         {
 	        foreach (KeyValuePair<string, Api.Broadcast> broadcast in Announcements.Broadcasts)
 	        {
-		        _coroutines.Add(Timing.RunCoroutine(PlayBroadcast(broadcast.Value)));
+		        Coroutines.Add(Timing.RunCoroutine(PlayBroadcast(broadcast.Value)));
 		        Log.Debug($"Loaded broadcast: {broadcast.Key}", Loader.ShouldDebugBeShown);
 			}
 
 	        foreach (KeyValuePair<string, Hint> hint in Announcements.Hints)
 	        {
-		        _coroutines.Add(Timing.RunCoroutine(PlayHint(hint.Value)));
+		        Coroutines.Add(Timing.RunCoroutine(PlayHint(hint.Value)));
 				Log.Debug($"Loaded hint: {hint.Key}", Loader.ShouldDebugBeShown);
 	        }
 
-			Log.Debug($"Total running coroutines: {_coroutines.Count}", Loader.ShouldDebugBeShown);
+			Log.Debug($"Total running coroutines: {Coroutines.Count}", Loader.ShouldDebugBeShown);
         }
 
         public static void ReloadAnnouncements()
         {
-	        Timing.KillCoroutines(_coroutines);
+	        Timing.KillCoroutines(Coroutines);
+			Coroutines.Clear();
 
 			Announcements.LoadData();
 

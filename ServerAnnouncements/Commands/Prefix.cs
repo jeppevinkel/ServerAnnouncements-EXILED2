@@ -16,7 +16,7 @@ namespace ServerAnnouncements.Commands
 		{
 			RegisterCommand(new Reload());
 
-			//RegisterCommand(new Edit.Prefix(new List<string>{Command}));
+			RegisterCommand(new Edit.Prefix(new List<string>{Command}));
 		}
 
 		protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)

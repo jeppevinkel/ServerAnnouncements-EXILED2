@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Exiled.Loader;
 using ServerAnnouncements.Api.YamlComments;
 using YamlDotNet.Serialization;
 
@@ -70,6 +71,8 @@ namespace ServerAnnouncements.Api
 
 				var announcements = deserializer.Deserialize<Announcements>(data);
 
+				Log.Debug($"Found {announcements.Broadcasts.Count} unique broadcasts and {announcements.Hints.Count} unique hints.", Loader.ShouldDebugBeShown);
+
 				ServerAnnouncements.Announcements = announcements;
 			}
 
@@ -80,11 +83,14 @@ namespace ServerAnnouncements.Api
 				if (string.IsNullOrEmpty(sharedData)) return;
 
 				var sharedAnnouncements = deserializer.Deserialize<Announcements>(sharedData);
-				ServerAnnouncements.Announcements.Hints.Concat(sharedAnnouncements.Hints)
+
+				Log.Debug($"Found {sharedAnnouncements.Broadcasts.Count} shared broadcasts and {sharedAnnouncements.Hints.Count} shared hints.", Loader.ShouldDebugBeShown);
+
+				ServerAnnouncements.Announcements.Hints = ServerAnnouncements.Announcements.Hints.Concat(sharedAnnouncements.Hints)
 					.GroupBy(kvp => kvp.Key, kvp => kvp.Value)
 					.ToDictionary(g => g.Key, g => g.First());
 
-				ServerAnnouncements.Announcements.Broadcasts.Concat(sharedAnnouncements.Broadcasts)
+				ServerAnnouncements.Announcements.Broadcasts = ServerAnnouncements.Announcements.Broadcasts.Concat(sharedAnnouncements.Broadcasts)
 					.GroupBy(kvp => kvp.Key, kvp => kvp.Value)
 					.ToDictionary(g => g.Key, g => g.First());
 			}
