@@ -32,7 +32,11 @@ namespace ServerAnnouncements
         {
 	        base.OnDisabled();
 
-	        Timing.KillCoroutines(Coroutines);
+			foreach (CoroutineHandle coroutineHandle in Coroutines)
+			{
+				Timing.KillCoroutines(coroutineHandle);
+			}
+	        
 	        Coroutines.Clear();
         }
 
@@ -55,7 +59,11 @@ namespace ServerAnnouncements
 
         public static void ReloadAnnouncements()
         {
-	        Timing.KillCoroutines(Coroutines);
+	        foreach (CoroutineHandle coroutineHandle in Coroutines)
+	        {
+		        Timing.KillCoroutines(coroutineHandle);
+	        }
+
 			Coroutines.Clear();
 
 			Announcements.LoadData();
